@@ -100,7 +100,7 @@ class ProstateTianfei(Dataset):
             self.images, self.labels = images[-testlen:], labels[-testlen:]
 
         self.transform = transform
-        self.labels = self.labels.astype(long).squeeze()
+        self.labels = self.labels.astype(int).squeeze()
 
     def __len__(self):
         return self.images.shape[0]
