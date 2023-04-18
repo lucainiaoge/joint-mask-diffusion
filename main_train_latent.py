@@ -22,7 +22,7 @@ vae = StablePretrainedVAE(gray = gray)
 # vae = DownUpsampleVAE(gray = gray, down_factor = 3)
 
 mask_unet = Unet_conditional(
-    dim = 8,
+    dim = 32,
     dim_mults=(1, 2, 4, 8),
     channels = bits,
     mask_channels = vae.c, # for mask condition (as image)
@@ -47,7 +47,7 @@ mask_bit_diffusion_model = CFGBitDiffusion(
     mask_unet,
     image_size = image_size,
     bits = bits,
-    timesteps = 20,   # number of sampling steps
+    timesteps = 40,   # number of sampling steps
 )
 
 img_latent_diffusion_model = CFGGaussianDiffusion(
@@ -86,7 +86,7 @@ trainer = JointMaskImageStableDiffusionTrainer(
     split_batches = True,
 )
 
-trainer.load(111) #optional
+# trainer.load(111) #optional
 
 trainer.train()
 

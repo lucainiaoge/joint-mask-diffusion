@@ -19,7 +19,7 @@ bits = 8
 gray = True
 
 # vae = StablePretrainedVAE(gray = gray)
-vae = DownUpsampleVAE(gray = gray, down_factor = 3)
+vae = DownUpsampleVAE(gray = gray, down_factor = 1)
 
 mask_unet = Unet_conditional(
     dim = 32, # 8
@@ -47,7 +47,7 @@ mask_bit_diffusion_model = CFGBitDiffusion(
     mask_unet,
     image_size = image_size,
     bits = bits,
-    timesteps = 20,   # number of sampling steps
+    timesteps = 40,   # number of sampling steps
 )
 
 img_latent_diffusion_model = CFGGaussianDiffusion(
