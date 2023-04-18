@@ -22,7 +22,7 @@ gray = True
 vae = DownUpsampleVAE(gray = gray, down_factor = 3)
 
 mask_unet = Unet_conditional(
-    dim = 8,
+    dim = 32, # 8
     dim_mults=(1, 2, 4, 8),
     channels = bits,
     mask_channels = vae.c, # for mask condition (as image)
@@ -70,10 +70,10 @@ trainer = JointMaskImageStableDiffusionTrainer(
     img_latent_diffusion_model = img_latent_diffusion_model,
     joint_dataset = dataset,
     stable_vae = vae,
-    train_batch_size = 4,
+    train_batch_size = 8,
     gradient_accumulate_every = 1,
     train_lr = 1e-4,
-    train_num_steps = 300000,
+    train_num_steps = 500000,
     ema_update_every = 10,
     ema_decay = 0.995,
     adam_betas = (0.9, 0.99),
@@ -86,7 +86,7 @@ trainer = JointMaskImageStableDiffusionTrainer(
     split_batches = True,
 )
 
-trainer.load(134) #optional
+# trainer.load(134) #optional
 
 trainer.train()
 
