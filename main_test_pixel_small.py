@@ -66,7 +66,7 @@ tester = JointMaskImageStableDiffusionTester(
     img_latent_diffusion_model = img_latent_diffusion_model,
     joint_dataset = dataset,
     stable_vae = vae,
-    results_folder = "./results_mri_pixel_gray",
+    results_folder = "./results_mri_pixel_gray_small",
 )
 
 tester.load(300)
