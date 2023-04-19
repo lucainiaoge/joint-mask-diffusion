@@ -152,3 +152,21 @@ class JointMaskImageStableDiffusionTester(object):
                 utils.save_image(img, gt_img_path, nrow = 1)
                 
                 pbar.update(1)
+    
+    @torch.no_grad()
+    def img_gen_test(self, save_dir, num_samples):
+        accelerator = self.accelerator
+        device = accelerator.device
+        self.ema_img.to(device)
+        self.step = 0
+        with tqdm(initial = 0, total = num_samples, disable = not accelerator.is_main_process) as pbar:
+            while self.step < num_samples:
+                img = self.ema_img.ema_model.sample(batch_size=1)
+                self.step += 1
+                pbar.set_description(f'sample {self.step}')
+                
+                img_path = os.path.join(save_dir, str(self.step) + "-gen-img.png")
+                
+                utils.save_image(img, img_path, nrow = 1)
+                
+                pbar.update(1)

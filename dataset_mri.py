@@ -10,8 +10,10 @@ import torch
 from torch import nn
 from torch.optim import Adam
 from torch.utils.data import Dataset
+from torchvision.utils import save_image
 from torchvision import transforms as T, utils
 from torchvision.transforms import InterpolationMode
+
 from PIL import Image
 
 import SimpleITK as sitk
@@ -50,6 +52,7 @@ class ProstateTianfei(Dataset):
             self.image_size = 384
 
         images, labels = [], []
+        filenames = []
         for site in channels.keys():
             sitedir = os.path.join(base_path, site)
             sample_list = sorted(os.listdir(sitedir))
@@ -74,6 +77,7 @@ class ProstateTianfei(Dataset):
 
                         labels.append(label)
                         images.append(image)
+                        filenames.append(site+"-"+sample[:6]+"-"+str(i))
                     
         labels = np.array(labels).astype(int)
         images = np.array(images)
@@ -93,14 +97,14 @@ class ProstateTianfei(Dataset):
         testlen = int(0.2 * len(labels))
 
         if split == 'train':
-            self.images, self.labels = images[:trainlen], labels[:trainlen]
+            self.images, self.labels, self.filenames = images[:trainlen], labels[:trainlen], filenames[:trainlen]
         elif split == 'valid':
-            self.images, self.labels = images[trainlen:trainlen + vallen], labels[trainlen:trainlen + vallen]
+            self.images, self.labels, self.filenames = images[trainlen:trainlen + vallen], labels[trainlen:trainlen + vallen], filenames[trainlen:trainlen + vallen]
         else:
-            self.images, self.labels = images[-testlen:], labels[-testlen:]
+            self.images, self.labels, self.filenames = images[-testlen:], labels[-testlen:], filenames[-testlen:]
 
         self.transform = transform
-        self.labels = self.labels.astype(int).squeeze()
+        self.labels = self.labels.astype(np.long).squeeze()
 
     def __len__(self):
         return self.images.shape[0]
@@ -129,3 +133,19 @@ class ProstateTianfei(Dataset):
         if self.gray:
             image = image.mean(dim=0, keepdim=True)
         return label, image
+    
+    def get_filename(self, idx):
+        return self.filenames[idx]
+
+    
+def save_mri_to_images(mri_dataset, label_dir, img_dir):
+    assert label_dir != img_dir, "image and label directory should be different"
+    for idx in range(len(mri_dataset)):
+        label, image = mri_dataset[idx]
+        filename = mri_dataset.get_filename(idx)
+        label_pth = os.path.join(label_dir, filename+".png")
+        img_pth = os.path.join(img_dir, filename+".png")
+        save_image(label, label_pth)
+        save_image(image, img_pth)
+        print("saved file "+filename)
+    print("all done!")
