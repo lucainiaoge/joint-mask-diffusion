@@ -22,7 +22,7 @@ vae = StablePretrainedVAE(gray = gray)
 # vae = DownUpsampleVAE(gray = gray, down_factor = 3)
 
 mask_unet = Unet_conditional(
-    dim = 32,
+    dim = 16,
     dim_mults=(1, 2, 4, 8),
     channels = bits,
     mask_channels = vae.c, # for mask condition (as image)
@@ -77,7 +77,7 @@ trainer = JointMaskImageStableDiffusionTrainer(
     ema_update_every = 10,
     ema_decay = 0.995,
     adam_betas = (0.9, 0.99),
-    save_and_sample_every = 1000,#1000,
+    save_and_sample_every = 10000,#1000,
     num_samples = 16,#25,
     results_folder = './results_mri_latent_gray',
     amp = False,
