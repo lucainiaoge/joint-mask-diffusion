@@ -19,7 +19,7 @@ bits = 8
 gray = True
 
 # vae = StablePretrainedVAE(gray = gray)
-vae = DownUpsampleVAE(gray = gray, down_factor = 1.5)
+vae = DownUpsampleVAE(gray = gray, down_factor = 3)
 
 mask_unet = Unet_conditional(
     dim = 16, # 8
@@ -74,7 +74,7 @@ trainer = JointMaskImageStableDiffusionTrainer(
     gradient_accumulate_every = 1,
     train_lr = 1e-4,
     train_num_steps = 500000,
-    ema_update_every = 10,
+    ema_update_every = 50, #10
     ema_decay = 0.995,
     adam_betas = (0.9, 0.99),
     save_and_sample_every = 10000,#1000,
