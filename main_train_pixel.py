@@ -19,7 +19,7 @@ bits = 8
 gray = True
 
 # vae = StablePretrainedVAE(gray = gray)
-vae = DownUpsampleVAE(gray = gray, down_factor = 1)
+vae = DownUpsampleVAE(gray = gray, down_factor = 1.5)
 
 mask_unet = Unet_conditional(
     dim = 16, # 8
