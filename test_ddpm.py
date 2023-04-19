@@ -154,7 +154,7 @@ class JointMaskImageStableDiffusionTester(object):
                 pbar.update(1)
     
     @torch.no_grad()
-    def img_gen_test(self, save_dir, num_samples):
+    def img_gen_test_pixel(self, save_dir, num_samples, ori_size = False):
         accelerator = self.accelerator
         device = accelerator.device
         self.ema_img.to(device)
@@ -166,6 +166,9 @@ class JointMaskImageStableDiffusionTester(object):
                 pbar.set_description(f'sample {self.step}')
                 
                 img_path = os.path.join(save_dir, str(self.step) + "-gen-img.png")
+                
+                if not ori_size:
+                    img = self.stable_vae.decode(img).float()
                 
                 utils.save_image(img, img_path, nrow = 1)
                 
