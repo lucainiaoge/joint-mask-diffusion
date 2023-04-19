@@ -188,7 +188,7 @@ class JointMaskImageStableDiffusionTrainer(object):
                     ax[1,1].matshow(torch.permute(z_img_val[0][2:3].cpu(), (1, 2, 0)))
                 all_masks_list = [
                     self.ema_mask.ema_model.sample(
-                        batch_size=img.shape[0], 
+                        batch_size=z_img.shape[0], 
                         mask_cond=z_img, 
                         # class_cond=torch.zeros(img.shape[0]).to(device).long()
                     ) for z_img in all_images_list
