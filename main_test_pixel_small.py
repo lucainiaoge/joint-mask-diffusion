@@ -70,4 +70,4 @@ tester = JointMaskImageStableDiffusionTester(
 )
 
 tester.load(300)
-tester.img_gen_test_pixel(save_dir = save_dir, num_samples = 1000, ori_size = False)
+tester.img_gen_test_pixel(save_dir = save_dir, num_samples = 2000, ori_size = False)

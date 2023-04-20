@@ -167,7 +167,7 @@ class JointMaskImageStableDiffusionTester(object):
                 
                 img_path = os.path.join(save_dir, str(self.step) + "-gen-img.png")
                 
-                if not ori_size:
+                if ori_size:
                     img = self.stable_vae.decode(img).float()
                 
                 utils.save_image(img, img_path, nrow = 1)
