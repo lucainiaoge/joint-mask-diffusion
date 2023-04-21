@@ -250,8 +250,8 @@ class CFGBitDiffusion(nn.Module):
         # input and target shapes must match
         assert pred_logit.size() == gt_logit .size(), "'pred' and 'gt' must have the same shape"
 
-        pred_logit = rearrange(pred_logit, "b, 1, h, w -> b, (h w)")
-        gt_logit = rearrange(gt_logit, "b, 1, h, w -> b, (h w)")
+        pred_logit = rearrange(pred_logit, "b 1 h w -> b (h w)")
+        gt_logit = rearrange(gt_logit, "b 1 h w -> b (h w)")
         gt_logit = gt_logit.float()
 
         # compute per channel Dice Coefficient
