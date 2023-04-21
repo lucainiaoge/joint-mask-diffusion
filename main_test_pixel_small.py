@@ -15,7 +15,7 @@ from bit_gaussian_ddpm import CFGBitDiffusion
 from test_ddpm import JointMaskImageStableDiffusionTester
 
 image_size = 384
-bits = 8
+bits = 1
 gray = True
 
 # vae = StablePretrainedVAE(gray = gray)
