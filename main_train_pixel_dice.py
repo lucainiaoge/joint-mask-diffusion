@@ -15,7 +15,7 @@ from bit_gaussian_ddpm import CFGBitDiffusion
 from train_ddpm import JointMaskImageStableDiffusionTrainer
 
 image_size = 384
-bits = 8
+bits = 1
 gray = True
 
 # vae = StablePretrainedVAE(gray = gray)
@@ -48,6 +48,7 @@ mask_bit_diffusion_model = CFGBitDiffusion(
     image_size = image_size,
     bits = bits,
     timesteps = 40,   # number of sampling steps
+    loss_type = "dice",
 )
 
 img_latent_diffusion_model = CFGGaussianDiffusion(
@@ -79,7 +80,7 @@ trainer = JointMaskImageStableDiffusionTrainer(
     adam_betas = (0.9, 0.99),
     save_and_sample_every = 10000,#1000,
     num_samples = 16,#25,
-    results_folder = './results_mri_pixel_gray',
+    results_folder = './results_mri_pixel_gray_dice',
     amp = False,
     fp16 = False,
     use_lion = False,

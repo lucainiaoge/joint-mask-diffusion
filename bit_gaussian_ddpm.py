@@ -97,7 +97,8 @@ class CFGBitDiffusion(nn.Module):
         use_ddim = False,
         noise_schedule = 'cosine',
         time_difference = 0.,
-        bit_scale = 1.
+        bit_scale = 1.,
+        loss_type = "mse"
     ):
         super().__init__()
         self.model = model
@@ -122,6 +123,8 @@ class CFGBitDiffusion(nn.Module):
         # as a way to fix a deficiency in self-conditioning and lower FID when the number of sampling timesteps is < 400
 
         self.time_difference = time_difference
+
+        self.loss_type = loss_type
 
     @property
     def device(self):
@@ -291,9 +294,9 @@ class CFGBitDiffusion(nn.Module):
         # predict and take gradient step
         pred = self.model(noised_img, noise_level, self_cond, mask_cond, class_cond)
 
-        if self.bits > 1:
-            return F.mse_loss(pred, img)
-        else:
+        if self.bits == 1 and self.loss_type == "dice":
             return self.binary_dice_loss(pred, img_ori)
+        else:
+            return F.mse_loss(pred, img)
 
 
