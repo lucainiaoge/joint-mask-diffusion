@@ -86,7 +86,7 @@ trainer = JointMaskImageStableDiffusionTrainer(
     split_batches = True,
 )
 
-# trainer.load(134) #optional
+trainer.load(21) #optional
 
 trainer.train()
 
