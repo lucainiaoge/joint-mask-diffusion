@@ -71,9 +71,9 @@ tester = JointMaskImageStableDiffusionTester(
 
 
 for ckpt in ckpts:
-    save_dir = './gen_mri_img_pixel_gray_{}'.format{ckpt}
+    save_dir = './gen_mri_img_pixel_gray_{}'.format(ckpt)
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     tester.load(ckpt)
-    print("Evaluating ckpt milestone {} ...".format{ckpt})
+    print("Evaluating ckpt milestone {} ...".format(ckpt))
     tester.img_gen_test_pixel(save_dir = save_dir, num_samples = 2000, ori_size = False)
