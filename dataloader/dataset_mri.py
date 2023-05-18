@@ -27,7 +27,7 @@ from utils import exists, convert_image_to_fn
 # dataset classes
 
 subdir_list = [
-    "BIDMC", "BMC", "HK", "I2CVB", "RUNMC", "UCL"
+    "BIDMC"#, "BMC", "HK", "I2CVB", "RUNMC", "UCL"
 ]
 
 def convert_from_nii_to_png(img):

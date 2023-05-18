@@ -1,4 +1,6 @@
 # https://github.com/lucidrains/bit-diffusion/blob/main/bit_diffusion/bit_diffusion.py
+import sys
+sys.path.append("..")
 
 from collections import namedtuple
 from functools import partial

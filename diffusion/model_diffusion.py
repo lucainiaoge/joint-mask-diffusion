@@ -1,4 +1,7 @@
 # https://github.com/lucidrains/denoising-diffusion-pytorch/blob/main/denoising_diffusion_pytorch/denoising_diffusion_pytorch.py
+import sys
+sys.path.append("..")
+
 import math
 from functools import partial
 
@@ -11,10 +14,10 @@ from torchvision import transforms as T, utils
 from einops import rearrange, reduce, repeat
 from einops.layers.torch import Rearrange
 
-from bit_gaussian_ddpm import decimal_to_bits
-from model_blocks import Residual, Upsample, Downsample, PreNorm
-from model_blocks import SinusoidalPosEmb, RandomOrLearnedSinusoidalPosEmb
-from model_blocks import Block, ResnetBlock, LinearAttention, Attention
+from .bit_gaussian_ddpm import decimal_to_bits
+from .model_blocks import Residual, Upsample, Downsample, PreNorm
+from .model_blocks import SinusoidalPosEmb, RandomOrLearnedSinusoidalPosEmb
+from .model_blocks import Block, ResnetBlock, LinearAttention, Attention
 from utils import exists, default, identity, uniform, prob_mask_like
 
 # model, unconditioned
