@@ -192,6 +192,7 @@ class JointMaskImageStableDiffusionTester(object):
             os.makedirs(mask_dir)
 
         self.ema_img.to(device)
+        self.ema_mask.to(device)
         self.step = 0
         with tqdm(initial = 0, total = num_samples, disable = not accelerator.is_main_process) as pbar:
             while self.step < num_samples:
