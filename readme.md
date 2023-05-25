@@ -17,7 +17,7 @@ python main_train.py
 --batch-size [int, default: 8] 
 --train-steps [int, default: 500000] 
 --save-interval [int, default: 10000]
---lr [int, default: 0.0001]
+--lr [float, default: 0.0001]
 ```
 
 
