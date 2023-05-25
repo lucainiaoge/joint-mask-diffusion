@@ -8,19 +8,14 @@ from config_pixel import image_size, bits, gray
 from config_pixel import mask_unet, img_unet, mask_bit_diffusion_model, img_latent_diffusion_model
 from config_pixel import vae, dataset
 
-LOSS_CONFS = ["mse", "dice"]
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--milestone', type=int, required=True)
     parser.add_argument('--load-dir', type=str, required=True)
     parser.add_argument('--save-dir', type=str, required=True)
-    parser.add_argument('--loss-conf', type=str, default="dice")
 
     args = parser.parse_args()
-
-    assert args.loss_conf in LOSS_CONFS, "loss-conf should choose in " + str(LOSS_CONFS)
-    mask_bit_diffusion_model.loss_type = args.loss_conf
 
     tester = JointMaskImageStableDiffusionTester(
         mask_bit_diffusion_model = mask_bit_diffusion_model,
