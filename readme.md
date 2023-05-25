@@ -6,6 +6,33 @@ This is a joint mask-image generation model, which is able to accomplish 3 main 
 2. Image segmentation (mask generation conditioned by image)
 3. Mask-conditioned image generation
 
-Ongoing...
 
-We only provide API segmenting Prostate MRI dataset (```main_segment.py```). For custom dataset, please create a pytorch dataset object in config file, and replace the Prostate MRI dataset with the custom dataset.
+# Training
+
+```
+python main_train.py 
+--ckpt-dir [checkpoint_save_dir] 
+--milestone [int, loading checkpoint number] 
+--loss-conf [choose from "dice" and "mse"] 
+--batch-size [int, default: 8] 
+--train-steps [int, default: 500000] 
+--save-interval [int, default: 10000]
+--lr [int, default: 0.0001]
+```
+
+
+# Testing
+
+To generate image-label dataset, run
+
+```
+python main_test.py
+--milestone [int, loading checkpoint number]  
+--load-dir [checkpoint dir] 
+--save-dir [generated dataset dir] 
+--num-samples [int] 
+```
+
+Similarly, run ```python main_segment.py``` to implement semantic segmentation on Prostate MRI dataset.
+
+We only provide API (```main_segment.py```) segmenting Prostate MRI dataset. For custom dataset, please create a pytorch dataset object in config file, and replace the Prostate MRI dataset with the custom dataset.
