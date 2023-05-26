@@ -2,7 +2,7 @@ import os
 import argparse
 from pathlib import Path
 
-from diffusion.test_ddpm import JointMaskImageStableDiffusionTester
+from diffusion.train_ddpm import JointMaskImageStableDiffusionTrainer
 
 from config_pixel import image_size, bits, gray
 from config_pixel import mask_unet, img_unet, mask_bit_diffusion_model, img_latent_diffusion_model
