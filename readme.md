@@ -1,4 +1,4 @@
-# Joint Mask DDPM
+# Image-mask Diffusion (IMDiff)
 
 This is a joint mask-image generation model, which is able to accomplish 3 main tasks:
 
