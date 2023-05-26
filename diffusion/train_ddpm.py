@@ -1,4 +1,7 @@
 # https://github.com/lucidrains/denoising-diffusion-pytorch/blob/main/denoising_diffusion_pytorch/denoising_diffusion_pytorch.py
+import sys
+sys.path.append("..")
+
 import os
 from pathlib import Path
 from multiprocessing import cpu_count

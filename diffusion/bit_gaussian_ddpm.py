@@ -1,4 +1,6 @@
 # https://github.com/lucidrains/bit-diffusion/blob/main/bit_diffusion/bit_diffusion.py
+import sys
+sys.path.append("..")
 
 from collections import namedtuple
 from functools import partial
@@ -97,7 +99,8 @@ class CFGBitDiffusion(nn.Module):
         use_ddim = False,
         noise_schedule = 'cosine',
         time_difference = 0.,
-        bit_scale = 1.
+        bit_scale = 1.,
+        loss_type = "mse"
     ):
         super().__init__()
         self.model = model
@@ -122,6 +125,8 @@ class CFGBitDiffusion(nn.Module):
         # as a way to fix a deficiency in self-conditioning and lower FID when the number of sampling timesteps is < 400
 
         self.time_difference = time_difference
+
+        self.loss_type = loss_type
 
     @property
     def device(self):
@@ -243,6 +248,23 @@ class CFGBitDiffusion(nn.Module):
             cond_scale = cond_scale
         ).float()
 
+    def binary_dice_loss(self, pred_bit, gt_logit, scale = 2):
+        assert self.bits == 1, "should be binary bit diffusion (bit==1)"
+        pred_logit = F.sigmoid(pred_bit)
+
+        # input and target shapes must match
+        assert pred_logit.size() == gt_logit .size(), "'pred' and 'gt' must have the same shape"
+
+        pred_logit = rearrange(pred_logit, "b 1 h w -> b (h w)")
+        gt_logit = rearrange(gt_logit, "b 1 h w -> b (h w)")
+        gt_logit = gt_logit.float()
+
+        # compute per channel Dice Coefficient
+        intersect = (2 * pred_logit * gt_logit).sum(-1) + 1
+        denominator = (pred_logit + gt_logit).sum(-1) + 1
+
+        return scale * (1 - intersect / denominator).mean()
+
     def forward(self, img, mask_cond = None, class_cond = None):
         batch, c, h, w, device, img_size, = *img.shape, img.device, self.image_size
         assert h == img_size and w == img_size, f'height and width of image must be {img_size}'
@@ -251,6 +273,7 @@ class CFGBitDiffusion(nn.Module):
         times = torch.zeros((batch,), device = device).float().uniform_(0, 1.)
 
         # convert image to bit representation
+        img_ori = img * 1.0
         img = decimal_to_bits(img, self.bits) * self.bit_scale
 
         # noise sample
@@ -273,6 +296,9 @@ class CFGBitDiffusion(nn.Module):
         # predict and take gradient step
         pred = self.model(noised_img, noise_level, self_cond, mask_cond, class_cond)
 
-        return F.mse_loss(pred, img)
+        if self.bits == 1 and self.loss_type == "dice":
+            return self.binary_dice_loss(pred, img_ori)
+        else:
+            return F.mse_loss(pred, img)
 
 

@@ -1,21 +1,12 @@
-import os
-from einops import rearrange
-
-import torch
-from pathlib import Path
-from collections import namedtuple
-from multiprocessing import cpu_count
-
-from stable_diffusion_vae import StablePretrainedVAE, DownUpsampleVAE
-from model_diffusion import Unet_conditional
-from dataset_mri import ProstateTianfei
-from dataset_celeba import MaskImageDataset
-from gaussian_ddpm import CFGGaussianDiffusion
-from bit_gaussian_ddpm import CFGBitDiffusion
-from train_ddpm import JointMaskImageStableDiffusionTrainer
+from diffusion.stable_diffusion_vae import StablePretrainedVAE, DownUpsampleVAE
+from diffusion.model_diffusion import Unet_conditional
+from diffusion.gaussian_ddpm import CFGGaussianDiffusion
+from diffusion.bit_gaussian_ddpm import CFGBitDiffusion
+from dataloader.dataset_mri import ProstateTianfei
+from dataloader.dataset_celeba import MaskImageDataset
 
 image_size = 384
-bits = 8
+bits = 1
 gray = True
 
 vae = StablePretrainedVAE(gray = gray)
@@ -56,7 +47,6 @@ img_latent_diffusion_model = CFGGaussianDiffusion(
     timesteps = 100,   # number of sampling steps
 )
 
-
 dataset_dir = "ProstateMRI"
 dataset = ProstateTianfei(base_path="ProstateMRI", image_size=image_size, train_ratio=0.8, split='train', transform=None, gray=gray)
 
@@ -64,30 +54,3 @@ dataset = ProstateTianfei(base_path="ProstateMRI", image_size=image_size, train_
 # mask_folder = os.path.join(celeba_folder, "mask")
 # image_folder = os.path.join(celeba_folder, "ori")
 # dataset = MaskImageDataset(mask_folder = mask_folder, image_size = image_size, image_folder = image_folder)
-
-trainer = JointMaskImageStableDiffusionTrainer(
-    mask_bit_diffusion_model = mask_bit_diffusion_model,
-    img_latent_diffusion_model = img_latent_diffusion_model,
-    joint_dataset = dataset,
-    stable_vae = vae,
-    train_batch_size = 8, #4
-    gradient_accumulate_every = 1,
-    train_lr = 1e-4,
-    train_num_steps = 500000,
-    ema_update_every = 50, #10
-    ema_decay = 0.995,
-    adam_betas = (0.9, 0.99),
-    save_and_sample_every = 10000,#1000,
-    num_samples = 16,#25,
-    results_folder = './results_mri_latent_gray',
-    amp = False,
-    fp16 = False,
-    use_lion = False,
-    split_batches = True,
-)
-
-# trainer.load(111) #optional
-
-trainer.train()
-
-

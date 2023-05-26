@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+
 import os
 from pathlib import Path
 from multiprocessing import cpu_count
@@ -171,5 +174,52 @@ class JointMaskImageStableDiffusionTester(object):
                     img = self.stable_vae.decode(img).float()
                 
                 utils.save_image(img, img_path, nrow = 1)
+                
+                pbar.update(1)
+
+    @torch.no_grad()
+    def dataset_gen_test_pixel(self, save_dir, num_samples, mask_first = True, ori_size = False):
+        accelerator = self.accelerator
+        device = accelerator.device
+
+        img_dir = os.path.join(save_dir, "imgs")
+        mask_dir = os.path.join(save_dir, "masks")
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        if not os.path.exists(img_dir):
+            os.makedirs(img_dir)
+        if not os.path.exists(mask_dir):
+            os.makedirs(mask_dir)
+
+        self.ema_img.to(device)
+        self.ema_mask.to(device)
+        self.step = 0
+        with tqdm(initial = 0, total = num_samples, disable = not accelerator.is_main_process) as pbar:
+            while self.step < num_samples:
+                if mask_first:
+                    mask = self.ema_mask.ema_model.sample(batch_size=1)
+                    img = self.ema_img.ema_model.sample(
+                        batch_size=1, 
+                        mask_cond=mask, 
+                    )
+                else:
+                    img = self.ema_img.ema_model.sample(batch_size=1)
+                    mask = self.ema_mask.ema_model.sample(
+                        batch_size=1, 
+                        mask_cond=img
+                    )
+
+                self.step += 1
+                pbar.set_description(f'sample {self.step}')
+                
+                img_path = os.path.join(img_dir, str(self.step) + "-gen.png")
+                mask_path = os.path.join(mask_dir, str(self.step) + "-gen.png")
+                
+                if ori_size:
+                    img = self.stable_vae.decode(img).float()
+                    mask = self.stable_vae.decode(mask).float()
+                
+                utils.save_image(img, img_path, nrow = 1)
+                utils.save_image(mask, mask_path, nrow = 1)
                 
                 pbar.update(1)
