@@ -6,6 +6,9 @@ This is a joint mask-image generation model, which is able to accomplish 3 main 
 2. Image segmentation (mask generation conditioned by image)
 3. Mask-conditioned image generation
 
+# Data Preparation
+
+Download ProstateMRI dataset from [https://liuquande.github.io/SAML/](https://liuquande.github.io/SAML/), and unzip at the root folder, creating ```./ProstateMRI```.
 
 # Training
 
